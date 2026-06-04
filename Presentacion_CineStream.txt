@@ -1,0 +1,48 @@
+# Guion de Presentación: Proyecto CineStream
+
+¡Hola a todos! Hoy voy a presentarles **CineStream**, una plataforma integral diseñada para la gestión moderna de cines. No se trata solo de una página para comprar boletos, sino de un sistema completo que abarca ventas, administración y analítica de datos en tiempo real.
+
+---
+
+## 1. ¿Qué es CineStream?
+CineStream es un sistema de gestión cinematográfica que conecta todas las áreas de un cine: desde el cliente que compra su entrada en casa, hasta el cajero en la taquilla, el portero que valida el acceso y el administrador que revisa las finanzas. 
+
+## 2. Arquitectura y Stack Tecnológico
+Para garantizar que el sistema sea rápido, escalable y seguro, utilizamos una arquitectura Fullstack moderna:
+- **Frontend:** Desarrollado con **React 18** y Vite. Utilizamos TailwindCSS para un diseño premium en Dark Mode y Recharts para la visualización de datos.
+- **Backend:** Construido sobre **Node.js y Express**. Implementamos **Socket.io** para manejar concurrencia en tiempo real.
+- **Base de Datos:** Utilizamos **PostgreSQL**, aprovechando sus transacciones ACID para evitar que dos personas compren el mismo asiento o producto al mismo tiempo.
+
+## 3. Módulos y Roles del Sistema
+El sistema cuenta con 4 roles principales, cada uno con una interfaz y funciones específicas:
+
+1. **Cliente (Venta Web):** 
+   - Puede ver la cartelera filtrando por géneros y horarios.
+   - Selecciona sus asientos en un mapa interactivo (los asientos se bloquean en tiempo real para otros usuarios).
+   - Puede agregar snacks de dulcería a su carrito.
+   - Al finalizar, recibe un ticket digital con un **Código QR encriptado** listo para ser escaneado.
+
+2. **Staff (Punto de Venta / POS Físico):** 
+   - Los cajeros tienen una interfaz rápida para vender boletos y combos de dulcería en el cine.
+   - Pueden abrir turnos y realizar su **arqueo de caja** al final del día.
+
+3. **Portero (Validación de Acceso):** 
+   - Utiliza la aplicación móvil o tablet para escanear los Códigos QR de los clientes. 
+   - El sistema desencripta el ticket (usando AES-256) y verifica que sea válido y que no haya sido utilizado previamente.
+
+4. **Administrador (Business Intelligence & Control):**
+   - Panel de control para programar funciones y evitar conflictos de horarios en las salas.
+   - Control de inventario de snacks, con alertas cuando queda poco stock.
+   - **Dashboard de Business Intelligence:** Gráficas en tiempo real de ingresos, películas más rentables y reportes de ocupación de salas.
+
+## 4. Características Técnicas Destacadas (Para mencionar)
+Si se preguntan qué hace especial a CineStream a nivel técnico:
+- **Concurrencia en tiempo real:** Gracias a WebSockets, si un cliente o el staff selecciona un asiento, este aparece ocupado instantáneamente para todos los demás.
+- **Seguridad Criptográfica:** Los códigos QR están encriptados. No es posible adivinar o falsificar un ticket.
+- **Transacciones Seguras (Anti-Overselling):** En bases de datos usamos bloqueos transaccionales para asegurar que nunca se venda más inventario o asientos de los que existen.
+- **Rendimiento:** Implementamos técnicas como *Code Splitting*, lo que significa que el navegador solo descarga el código necesario para la pantalla que se está viendo, haciendo la aplicación increíblemente rápida.
+
+## 5. Cierre
+En resumen, CineStream es un producto listo para producción que automatiza y unifica la experiencia del cliente con la operación interna del cine, aportando inteligencia de negocio y seguridad en cada transacción.
+
+¡Gracias por su atención! ¿Alguien tiene alguna pregunta?

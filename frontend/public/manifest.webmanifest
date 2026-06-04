@@ -1,0 +1,18 @@
+{
+  "short_name": "CineStream",
+  "name": "CineStream - Tu Cine Digital",
+  "description": "Tu plataforma de cine digital. Reserva entradas, elige tus asientos y disfruta de la mejor cartelera.",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "display": "standalone",
+  "orientation": "portrait"
+}

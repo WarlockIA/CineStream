@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CineStream — Cartelera Premium</title>
+  
+  <!-- Google Fonts: Montserrat (Headers), Outfit (UI/Pills), Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:wght@700;800;900&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <style>
+    /* ============================================================
+       DESIGN SYSTEM: NOIR CINÉMA VARIABLES
+       ============================================================ */
+    :root {
+      --bg-deep: #090d16;
+      --bg-dark: #0f1422;
+      --bg-card: rgba(19, 25, 38, 0.7);
+      --bg-card-hover: rgba(26, 34, 51, 0.95);
+      
+      --color-primary: #e50914; /* Rojo Cinema */
+      --color-primary-glow: rgba(229, 9, 20, 0.4);
+      --color-gold: #eab308; /* Oro VIP */
+      --color-gold-glow: rgba(234, 179, 8, 0.3);
+      --color-text-white: #ffffff;
+      --color-text-gray: #9ca3af;
+      --color-text-muted: #6b7280;
+      
+      --font-display: 'Montserrat', sans-serif;
+      --font-ui: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      
+      --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+      --glass-glow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    /* ============================================================
+       BASE STYLES
+       ============================================================ */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-deep);
+      color: var(--color-text-white);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(229, 9, 20, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(234, 179, 8, 0.03) 0%, transparent 40%);
+      background-attachment: fixed;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-deep);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #272f3f;
+      border-radius: 99px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--color-primary);
+    }
+
+    /* Helper Classes */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ============================================================
+       NAVBAR (STICKY GLASSMORPHISM)
+       ============================================================ */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(9, 13, 22, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: var(--glass-border);
+      box-shadow: var(--glass-glow);
+    }
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 4.5rem;
+    }
+
+    /* Logo Redesign (Neon Gradient Glow) */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.5rem;
+      letter-spacing: -0.05em;
+    }
+
+    .logo-popcorn {
+      font-size: 1.6rem;
+      animation: pulse-icon 2s infinite ease-in-out;
+    }
+
+    .logo-text {
+      background: linear-gradient(135deg, var(--color-primary) 30%, var(--color-gold) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 10px rgba(229, 9, 20, 0.3));
+    }
+
+    /* Profile VIP Card */
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: var(--glass-border);
+      border-radius: 20px;
+      padding: 0.35rem 1rem 0.35rem 0.35rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .profile-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(229, 9, 20, 0.3);
+      box-shadow: 0 0 15px rgba(229, 9, 20, 0.1);
+    }
+
+    .profile-avatar {
+      width: 2.2rem;
+      height: 2.2rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), #7c3aed);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .profile-name {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--color-text-white);
+    }
+
+    .profile-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: var(--color-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 0.05rem;
+    }
+
+    .profile-badge-crown {
+      animation: crown-float 1.5s infinite alternate ease-in-out;
+    }
+
+    /* ============================================================
+       HERO SPOTLIGHT SECTION (NETFLIX STYLE BACKDROP)
+       ============================================================ */
+    .hero-spotlight {
+      position: relative;
+      width: 100%;
+      height: 60vh;
+      min-height: 400px;
+      max-height: 550px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      border-bottom: var(--glass-border);
+    }
+
+    /* Background image with masks */
+    .hero-backdrop {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: linear-gradient(to right, var(--bg-deep) 10%, rgba(9, 13, 22, 0.4) 50%, var(--bg-deep) 90%),
+                        linear-gradient(to bottom, transparent 40%, var(--bg-deep) 100%),
+                        url('https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=1200&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center 30%;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      max-width: 600px;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 2rem 0;
+    }
+
+    .hero-tag {
+      align-self: flex-start;
+      background: rgba(229, 9, 20, 0.2);
+      border: 1px solid var(--color-primary);
+      color: var(--color-primary);
+      font-size: 0.7rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      padding: 0.35rem 0.85rem;
+      border-radius: 99px;
+      box-shadow: 0 0 10px rgba(229, 9, 20, 0.25);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 900;
+      line-height: 1;
+      letter-spacing: -0.04em;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+      background: linear-gradient(180deg, #ffffff 40%, #e2e8f0 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 0.85rem;
+      font-size: 0.85rem;
+      color: var(--color-text-gray);
+      font-weight: 500;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .hero-rating {
+      color: var(--color-gold);
+      font-weight: 700;
+    }
+
+    .hero-format-badge {
+      font-size: 0.65rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: white;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .hero-desc {
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--color-text-gray);
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-ui);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.85rem 1.6rem;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-smooth);
+      border: none;
+      outline: none;
+    }
+
+    .btn-primary {
+      background: var(--color-primary);
+      color: white;
+      box-shadow: 0 4px 20px var(--color-primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: #f41521;
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(229, 9, 20, 0.6);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      border: var(--glass-border);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* ============================================================
+       CALENDAR DATE SELECTOR (CAPSULES)
+       ============================================================ */
+    .calendar-section {
+      padding: 2.5rem 0 1rem 0;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-white);
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .section-title-bullet {
+      width: 4px;
+      height: 18px;
+      background: var(--color-primary);
+      border-radius: 99px;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--color-primary);
+    }
+
+    .calendar-carousel {
+      display: flex;
+      gap: 0.85rem;
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: thin;
+    }
+
+    .date-capsule {
+      flex: 0 0 calc(14.28% - 0.73rem);
+      min-width: 90px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0.9rem 0;
+      background: rgba(255, 255, 255, 0.03);
+      border: var(--glass-border);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      scroll-snap-align: start;
+      user-select: none;
+    }
+
+    /* Inactive Hover */
+    .date-capsule:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--color-primary);
+      box-shadow: 0 4px 15px rgba(229, 9, 20, 0.15);
+    }
+
+    .capsule-day {
+      font-family: var(--font-ui);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--color-text-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+      transition: var(--transition-smooth);
+    }
+
+    .capsule-num {
+      font-family: var(--font-ui);
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--color-text-white);
+      transition: var(--transition-smooth);
+    }
+
+    /* Active Capsule */
+    .date-capsule.active {
+      background: linear-gradient(135deg, var(--color-primary) 0%, #a8040a 100%);
+      border-color: var(--color-primary);
+      box-shadow: 0 10px 25px rgba(229, 9, 20, 0.4);
+      transform: translateY(-2px);
+      animation: capsule-pulse 3s infinite alternate ease-in-out;
+    }
+
+    .date-capsule.active .capsule-day {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    .date-capsule.active .capsule-num {
+      color: white;
+    }
+
+    /* ============================================================
+       MOVIE BILLBOARD SECTION
+       ============================================================ */
+    .movies-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 1.5rem 0 5rem 0;
+    }
+
+    /* Movie Card Layout (Column split or horizontal detail card) */
+    .movie-card {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-card);
+      border: var(--glass-border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: var(--glass-glow);
+      transition: var(--transition-smooth);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .movie-card:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+      background: var(--bg-card-hover);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    @media (min-width: 768px) {
+      .movie-card {
+        flex-direction: row;
+        height: 380px;
+      }
+    }
+
+    /* Card Left side: Poster with floating badges */
+    .card-poster-area {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #151a26;
+    }
+
+    @media (min-width: 768px) {
+      .card-poster-area {
+        width: 250px;
+        height: 100%;
+      }
+    }
+
+    .card-poster {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition-smooth);
+    }
+
+    .movie-card:hover .card-poster {
+      transform: scale(1.05);
+      filter: brightness(0.9);
+    }
+
+    /* Poster Overlay Overlay */
+    .card-poster-gradient {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(9, 13, 22, 0.8) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* Floating Badges on Poster */
+    .floating-duration {
+      position: absolute;
+      bottom: 1rem;
+      left: 1rem;
+      background: rgba(9, 13, 22, 0.75);
+      backdrop-filter: blur(8px);
+      border: var(--glass-border);
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--font-ui);
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .floating-rating {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: rgba(234, 179, 8, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      color: var(--color-gold);
+      font-size: 0.75rem;
+      font-weight: 800;
+      font-family: var(--font-ui);
+      padding: 0.35rem 0.7rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      box-shadow: 0 4px 10px rgba(234, 179, 8, 0.15);
+    }
+
+    /* Card Right side: Detail Area */
+    .card-detail-area {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+
+    .card-header-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .movie-genres {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--color-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .movie-title {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: white;
+      line-height: 1.1;
+    }
+
+    .movie-desc {
+      font-size: 0.85rem;
+      color: var(--color-text-gray);
+      line-height: 1.5;
+      margin-top: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* SHOWTIMES SECTION */
+    .showtimes-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .showtimes-label {
+      font-family: var(--font-ui);
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .showtimes-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+    }
+
+    /* TIME BUTTONS REDESIGN */
+    .time-btn {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 65px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.03);
+      border: var(--glass-border);
+      cursor: pointer;
+      user-select: none;
+      transition: var(--transition-smooth);
+      overflow: hidden;
+    }
+
+    .time-hour {
+      font-family: var(--font-ui);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: white;
+      letter-spacing: -0.02em;
+      transition: var(--transition-smooth);
+      margin-bottom: 0.05rem;
+    }
+
+    .time-room {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      transition: var(--transition-smooth);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    /* TIME BUTTON HOVER (Glow effect) */
+    .time-btn:hover {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px var(--color-primary-glow);
+    }
+
+    .time-btn:hover .time-hour {
+      color: white;
+      font-weight: 800;
+    }
+
+    .time-btn:hover .time-room {
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    /* TIME BUTTON URGENT STATE (Gold Glow / Limited Seats) */
+    .time-btn.urgent {
+      border-color: rgba(234, 179, 8, 0.3);
+      background: rgba(234, 179, 8, 0.03);
+    }
+
+    .time-btn.urgent .time-room {
+      color: var(--color-gold);
+    }
+
+    .time-btn.urgent:hover {
+      background: var(--color-gold);
+      border-color: var(--color-gold);
+      box-shadow: 0 8px 20px var(--color-gold-glow);
+    }
+
+    .time-btn.urgent:hover .time-room {
+      color: rgba(9, 13, 22, 0.9);
+      font-weight: 800;
+    }
+    
+    .time-btn.urgent:hover .time-hour {
+      color: var(--bg-deep);
+    }
+
+    /* Showtime Shimmer Overlay */
+    .time-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        45deg,
+        transparent 45%,
+        rgba(255, 255, 255, 0.1) 50%,
+        transparent 55%
+      );
+      transform: rotate(45deg);
+      transition: transform 0.6s ease;
+      pointer-events: none;
+    }
+
+    .time-btn:hover::after {
+      transform: translate(50%, 50%) rotate(45deg);
+    }
+
+    /* ============================================================
+       MODAL SIMULACIÓN CHECKOUT
+       ============================================================ */
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      animation: modal-fade 0.3s ease;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: var(--bg-dark);
+      border: 1px solid rgba(229, 9, 20, 0.25);
+      border-radius: 28px;
+      width: 100%;
+      max-width: 380px;
+      padding: 2rem;
+      box-shadow: 0 20px 50px rgba(229, 9, 20, 0.15);
+      text-align: center;
+      position: relative;
+      animation: modal-scale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-icon {
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: rgba(229, 9, 20, 0.1);
+      border: 1px solid var(--color-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-primary);
+      font-size: 2rem;
+      margin-bottom: 1.25rem;
+      animation: icon-bounce 1s infinite alternate ease-in-out;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-text {
+      font-size: 0.85rem;
+      color: var(--color-text-gray);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-details {
+      background: rgba(255, 255, 255, 0.02);
+      border: var(--glass-border);
+      border-radius: 16px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      text-align: left;
+    }
+
+    .modal-detail-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .detail-label {
+      color: var(--color-text-muted);
+      font-weight: 600;
+    }
+
+    .detail-val {
+      color: white;
+      font-weight: 700;
+    }
+
+    .btn-modal-close {
+      width: 100%;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      padding: 0.85rem;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      box-shadow: 0 4px 15px var(--color-primary-glow);
+    }
+
+    .btn-modal-close:hover {
+      background: #f41521;
+      box-shadow: 0 0 25px rgba(229, 9, 20, 0.5);
+    }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    @keyframes pulse-icon {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(229,9,20,0.2)); }
+      50% { transform: scale(1.1); filter: drop-shadow(0 0 10px rgba(229,9,20,0.6)); }
+    }
+
+    @keyframes crown-float {
+      0% { transform: translateY(0) rotate(-5deg); }
+      100% { transform: translateY(-2px) rotate(5deg); }
+    }
+
+    @keyframes capsule-pulse {
+      0% { box-shadow: 0 6px 16px rgba(229, 9, 20, 0.35); }
+      100% { box-shadow: 0 10px 30px rgba(229, 9, 20, 0.6); }
+    }
+
+    @keyframes modal-fade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes modal-scale {
+      from { transform: scale(0.9); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes icon-bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-6px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAVBAR ── -->
+  <nav class="navbar">
+    <div class="container navbar-container">
+      <!-- Logo Redesign -->
+      <a href="#" class="logo">
+        <span class="logo-popcorn">🍿</span>
+        <span class="logo-text">CineStream</span>
+      </a>
+      
+      <!-- User Profile Card -->
+      <div class="profile-card">
+        <div class="profile-avatar">CP</div>
+        <div class="profile-info">
+          <span class="profile-name">Cliente Prueba</span>
+          <span class="profile-badge">
+            <span class="profile-badge-crown">👑</span> Miembro Socio
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── HERO SPOTLIGHT (VENOM BACKDROP) ── -->
+  <header class="hero-spotlight">
+    <div class="hero-backdrop"></div>
+    <div class="container" style="position: relative; z-index: 5; width: 100%;">
+      <div class="hero-content">
+        <span class="hero-tag">Destacado de la semana</span>
+        <h2 class="hero-title">VENOM</h2>
+        <div class="hero-meta">
+          <span class="hero-meta-item">⭐ <span class="hero-rating">8.2</span> / 10</span>
+          <span class="hero-meta-item">🕒 112 min</span>
+          <span class="hero-meta-item">2026</span>
+          <span class="hero-format-badge">IMAX 3D</span>
+          <span class="hero-format-badge">Dolby Atmos</span>
+        </div>
+        <p class="hero-desc">
+          El reportero Eddie Brock intenta revivir su carrera investigando a la Fundación Vida, pero entra en contacto con un simbionte alienígena que le otorga superpoderes y comparte su cuerpo.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="simulateBooking('VENOM', '14:00', 'Sala IMAX 3D')">Adquirir Boletos</button>
+          <button class="btn btn-secondary" onclick="alert('Reproduciendo Tráiler Oficial de Venom...')">▶ Ver Tráiler</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- ── CALENDAR DATE SELECTOR ── -->
+    <section class="calendar-section">
+      <h3 class="section-title">
+        <span class="section-title-bullet"></span> Selecciona la Fecha
+      </h3>
+      
+      <div class="calendar-carousel">
+        <div class="date-capsule active" onclick="selectDate(this)">
+          <span class="capsule-day">Hoy</span>
+          <span class="capsule-num">31 de May</span>
+        </div>
+        <div class="date-capsule" onclick="selectDate(this)">
+          <span class="capsule-day">Lun</span>
+          <span class="capsule-num">1 de Jun</span>
+        </div>
+        <div class="date-capsule" onclick="selectDate(this)">
+          <span class="capsule-day">Mar</span>
+          <span class="capsule-num">2 de Jun</span>
+        </div>
+        <div class="date-capsule" onclick="selectDate(this)">
+          <span class="capsule-day">Mié</span>
+          <span class="capsule-num">3 de Jun</span>
+        </div>
+        <div class="date-capsule" onclick="selectDate(this)">
+          <span class="capsule-day">Jue</span>
+          <span class="capsule-num">4 de Jun</span>
+        </div>
+        <div class="date-capsule" onclick="selectDate(this)">
+          <span class="capsule-day">Vie</span>
+          <span class="capsule-num">5 de Jun</span>
+        </div>
+        <div class="date-capsule" onclick="selectDate(this)">
+          <span class="capsule-day">Sáb</span>
+          <span class="capsule-num">6 de Jun</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MOVIE BILLBOARD ── -->
+    <section class="billboard-section">
+      <h3 class="section-title">
+        <span class="section-title-bullet"></span> Funciones Disponibles
+      </h3>
+      
+      <div class="movies-grid">
+        <!-- Movie 1: Venom -->
+        <article class="movie-card">
+          <div class="card-poster-area">
+            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?q=80&w=400&auto=format&fit=crop" alt="Venom Poster" class="card-poster">
+            <div class="card-poster-gradient"></div>
+            <span class="floating-duration">🕒 112 min</span>
+            <span class="floating-rating">⭐ 8.2</span>
+          </div>
+          
+          <div class="card-detail-area">
+            <div class="card-header-block">
+              <span class="movie-genres">Acción / Ciencia Ficción</span>
+              <h4 class="movie-title">VENOM</h4>
+              <p class="movie-desc">Un periodista entra en contacto con un peligroso simbionte alienígena que se adhiere a su cuerpo y le otorga superpoderes destructivos.</p>
+            </div>
+            
+            <div class="showtimes-block">
+              <span class="showtimes-label">Horarios</span>
+              <div class="showtimes-list">
+                <button class="time-btn" onclick="simulateBooking('VENOM', '14:00', 'Sala Tradicional 2D')">
+                  <span class="time-hour">14:00</span>
+                  <span class="time-room">Sala 2D</span>
+                </button>
+                <button class="time-btn urgent" onclick="simulateBooking('VENOM', '17:30', 'Sala IMAX 3D')">
+                  <span class="time-hour">17:30</span>
+                  <span class="time-room">Últimos Asientos!</span>
+                </button>
+                <button class="time-btn" onclick="simulateBooking('VENOM', '20:45', 'Sala Dolby Atmos')">
+                  <span class="time-hour">20:45</span>
+                  <span class="time-room">Sala Atmos</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Movie 2: Avatar 2 -->
+        <article class="movie-card">
+          <div class="card-poster-area">
+            <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=400&auto=format&fit=crop" alt="Avatar Poster" class="card-poster">
+            <div class="card-poster-gradient"></div>
+            <span class="floating-duration">🕒 192 min</span>
+            <span class="floating-rating">⭐ 8.9</span>
+          </div>
+          
+          <div class="card-detail-area">
+            <div class="card-header-block">
+              <span class="movie-genres">Aventura / Fantasía</span>
+              <h4 class="movie-title">AVATAR: EL CAMINO DEL AGUA</h4>
+              <p class="movie-desc">Jake Sully vive con su nueva familia en el planeta de Pandora. Cuando una amenaza regresa, debe trabajar con Neytiri y los ejércitos de la tribu Na'vi para protegerlos.</p>
+            </div>
+            
+            <div class="showtimes-block">
+              <span class="showtimes-label">Horarios</span>
+              <div class="showtimes-list">
+                <button class="time-btn urgent" onclick="simulateBooking('AVATAR: EL CAMINO DEL AGUA', '15:00', 'Sala IMAX 3D')">
+                  <span class="time-hour">15:00</span>
+                  <span class="time-room">Casi Lleno!</span>
+                </button>
+                <button class="time-btn" onclick="simulateBooking('AVATAR: EL CAMINO DEL AGUA', '19:00', 'Sala Tradicional 3D')">
+                  <span class="time-hour">19:00</span>
+                  <span class="time-room">Sala 3D</span>
+                </button>
+                <button class="time-btn" onclick="simulateBooking('AVATAR: EL CAMINO DEL AGUA', '22:15', 'Sala VIP 2D')">
+                  <span class="time-hour">22:15</span>
+                  <span class="time-room">Sala VIP</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── MODAL CHECKOUT DEMO ── -->
+  <div id="bookingModal" class="modal">
+    <div class="modal-card">
+      <div class="modal-icon">🎫</div>
+      <h4 class="modal-title">¡Función Seleccionada!</h4>
+      <p class="modal-text">Has seleccionado la función. Iniciando el proceso de reserva en sala.</p>
+      
+      <div class="modal-details">
+        <div class="modal-detail-row">
+          <span class="detail-label">Película:</span>
+          <span id="detailMovie" class="detail-val">VENOM</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="detail-label">Horario:</span>
+          <span id="detailHour" class="detail-val">14:00</span>
+        </div>
+        <div class="modal-detail-row">
+          <span class="detail-label">Sala/Formato:</span>
+          <span id="detailRoom" class="detail-val">Sala IMAX 3D</span>
+        </div>
+      </div>
+      
+      <button class="btn-modal-close" onclick="closeModal()">Continuar al mapa de sala</button>
+    </div>
+  </div>
+
+  <!-- ── JAVASCRIPT LOGIC ── -->
+  <script>
+    // Seleccionar fecha en el calendario
+    function selectDate(element) {
+      document.querySelectorAll('.date-capsule').forEach(cap => {
+        cap.classList.remove('active');
+      });
+      element.classList.add('active');
+      
+      // Animación de recarga sutil en la cartelera
+      const grid = document.querySelector('.movies-grid');
+      grid.style.opacity = '0.3';
+      grid.style.transform = 'translateY(10px)';
+      grid.style.transition = 'opacity 0.2s, transform 0.2s';
+      
+      setTimeout(() => {
+        grid.style.opacity = '1';
+        grid.style.transform = 'translateY(0)';
+      }, 250);
+    }
+
+    // Abrir modal de simulación
+    function simulateBooking(movie, hour, room) {
+      document.getElementById('detailMovie').innerText = movie;
+      document.getElementById('detailHour').innerText = hour;
+      document.getElementById('detailRoom').innerText = room;
+      document.getElementById('bookingModal').classList.add('active');
+    }
+
+    // Cerrar modal
+    function closeModal() {
+      document.getElementById('bookingModal').classList.remove('active');
+    }
+
+    // Cerrar modal al pulsar fuera
+    window.onclick = function(event) {
+      const modal = document.getElementById('bookingModal');
+      if (event.target == modal) {
+        modal.classList.remove('active');
+      }
+    }
+  </script>
+</body>
+</html>

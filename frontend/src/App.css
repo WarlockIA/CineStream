@@ -1,0 +1,14 @@
+/* App.css — CineStream
+   Los estilos globales de componentes están en index.css.
+   Este archivo se mantiene para overrides específicos si fueran necesarios.
+*/
+
+/* Animación de entrada global para rutas */
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out both;
+}
+
+/* Clase de transición suave para el color de fondo del body */
+body {
+  transition: background-color 0.3s ease;
+}
