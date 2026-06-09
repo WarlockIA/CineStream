@@ -9,6 +9,7 @@ import AdminInventory from './AdminInventory';
 import AdminAudit from './AdminAudit';
 import AdminCoupons from './AdminCoupons';
 import { getBoliviaDate, toBoliviaInputString, toBoliviaISOWithOffset } from '../utils/dateHelper';
+import { getAPIUrl, getImageUrl } from '../config/api';
 
 export default function AdminPanel() {
   const { user, token, logout } = useAuth();
@@ -75,9 +76,9 @@ export default function AdminPanel() {
     const fetchData = async () => {
       try {
         const [moviesRes, roomsRes, functionsRes] = await Promise.all([
-          axios.get('http://localhost:3000/api/movies'),
-          axios.get('http://localhost:3000/api/rooms'),
-          axios.get('http://localhost:3000/api/functions?includeInactive=true')
+          axios.get(getAPIUrl('/api/movies')),
+          axios.get(getAPIUrl('/api/rooms')),
+          axios.get(getAPIUrl('/api/functions?includeInactive=true'))
         ]);
         setAvailableMovies(moviesRes.data.data);
         setAvailableRooms(roomsRes.data.data);
@@ -150,12 +151,12 @@ export default function AdminPanel() {
 
       let response;
       if (editingMovieId) {
-        response = await axios.put(`http://localhost:3000/api/movies/${editingMovieId}`, data, {
+        response = await axios.put(getAPIUrl(`/api/movies/${editingMovieId}`), data, {
           headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` }
         });
         toastSuccess(`¡Película "${response.data.data.title}" actualizada correctamente!`);
       } else {
-        response = await axios.post('http://localhost:3000/api/movies', data, {
+        response = await axios.post(getAPIUrl('/api/movies'), data, {
           headers: { 'Content-Type': 'multipart/form-data', 'Authorization': `Bearer ${token}` }
         });
         toastSuccess(`¡Película "${response.data.data.title}" añadida!`);
@@ -167,7 +168,7 @@ export default function AdminPanel() {
       if (e.target.reset) e.target.reset();
       
       // Recargar lista de películas
-      const moviesRes = await axios.get('http://localhost:3000/api/movies');
+      const moviesRes = await axios.get(getAPIUrl('/api/movies'));
       setAvailableMovies(moviesRes.data.data);
     } catch (error) {
       handleError(error);
@@ -198,7 +199,7 @@ export default function AdminPanel() {
   const executeToggleMovieActive = async (id, willActivate) => {
     try {
       setLoading(true);
-      const response = await axios.patch(`http://localhost:3000/api/movies/${id}/toggle-active`, {}, {
+      const response = await axios.patch(getAPIUrl(`/api/movies/${id}/toggle-active`), {}, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       const updatedMovie = response.data.data;
@@ -329,14 +330,14 @@ export default function AdminPanel() {
       let response;
       if (editingFunctionId) {
         response = await axios.put(
-          `http://localhost:3000/api/functions/${editingFunctionId}`,
+          getAPIUrl(`/api/functions/${editingFunctionId}`),
           payload,
           { headers: { 'Authorization': `Bearer ${token}` } }
         );
         toastSuccess('¡Función actualizada exitosamente!');
       } else {
         response = await axios.post(
-          'http://localhost:3000/api/functions',
+          getAPIUrl('/api/functions'),
           payload,
           { headers: { 'Authorization': `Bearer ${token}` } }
         );
@@ -500,7 +501,7 @@ export default function AdminPanel() {
       };
 
       const response = await axios.put(
-        `http://localhost:3000/api/functions/${funcId}`,
+        getAPIUrl(`/api/functions/${funcId}`),
         updatedData,
         { headers: { 'Authorization': `Bearer ${token}` } }
       );
@@ -517,7 +518,7 @@ export default function AdminPanel() {
     } catch (err) {
       handleError(err);
       // En error, re-sincronizar desde el servidor para asegurar consistencia
-      const res = await axios.get('http://localhost:3000/api/functions?includeInactive=true');
+      const res = await axios.get(getAPIUrl('/api/functions?includeInactive=true'));
       setFunctionsList(res.data.data);
     } finally {
       setLoading(false);
@@ -604,7 +605,7 @@ export default function AdminPanel() {
     });
 
     try {
-      const res = await axios.get(`http://localhost:3000/api/functions/${funcId}`);
+      const res = await axios.get(getAPIUrl(`/api/functions/${funcId}`));
       setHoveredFuncId(currentId => {
         if (currentId === funcId) {
           setHoveredFuncDetails(res.data.data);
@@ -629,7 +630,7 @@ export default function AdminPanel() {
   const confirmDeleteFunction = async () => {
     if (!functionToDelete) return;
     try {
-      await axios.delete(`http://localhost:3000/api/functions/${functionToDelete.id}`, {
+      await axios.delete(getAPIUrl(`/api/functions/${functionToDelete.id}`), {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       toastSuccess('Función eliminada correctamente.');
@@ -964,7 +965,7 @@ export default function AdminPanel() {
                         <tr key={movie.id} className="hover:bg-slate-800/40 transition-colors group">
                           <td className="px-3 py-3 w-[1%] whitespace-nowrap">
                             <div className="w-12 h-16 poster-shine-wrapper shadow-[0_10px_20px_rgba(0,0,0,0.5)] border border-slate-600/50">
-                              <img src={`http://localhost:3000${movie.posterUrl}`} alt={movie.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                              <img src={getImageUrl(movie.posterUrl)} alt={movie.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                             </div>
                           </td>
                           <td className="px-3 py-3 font-bold text-white text-[15px]">{movie.title}</td>
@@ -1213,7 +1214,7 @@ export default function AdminPanel() {
                               >
                                 {showPoster && func.Movie?.posterUrl && (
                                   <img 
-                                    src={`http://localhost:3000${func.Movie.posterUrl}`} 
+                                    src={getImageUrl(func.Movie.posterUrl)} 
                                     alt={func.Movie.title} 
                                     className="hidden sm:block w-7 h-10 object-cover rounded-md shadow-sm border border-slate-750 shrink-0 pointer-events-none"
                                   />
@@ -1304,7 +1305,7 @@ export default function AdminPanel() {
                           <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               {func.Movie?.posterUrl ? (
-                                <img src={`http://localhost:3000${func.Movie.posterUrl}`} alt="poster" className="w-8 h-12 object-cover rounded shadow-sm border border-slate-700/50" />
+                                <img src={getImageUrl(func.Movie.posterUrl)} alt="poster" className="w-8 h-12 object-cover rounded shadow-sm border border-slate-700/50" />
                               ) : (
                                 <div className="w-8 h-12 bg-slate-800 rounded flex items-center justify-center border border-slate-700/50">🎬</div>
                               )}
@@ -1375,7 +1376,7 @@ export default function AdminPanel() {
               {/* Contenido Completo */}
               <div className="flex gap-3">
                 <img 
-                  src={`http://localhost:3000${hoveredFuncDetails.Movie?.posterUrl}`} 
+                  src={getImageUrl(hoveredFuncDetails.Movie?.posterUrl)} 
                   alt={hoveredFuncDetails.Movie?.title} 
                   className="w-16 h-24 object-cover rounded-lg border border-slate-700 shadow-md shrink-0 animate-fade-in"
                 />
@@ -1537,7 +1538,7 @@ export default function AdminPanel() {
                         {selectedMovie ? (
                           <div className="flex items-center gap-3">
                             <img 
-                              src={`http://localhost:3000${selectedMovie.posterUrl}`} 
+                              src={getImageUrl(selectedMovie.posterUrl)} 
                               alt={selectedMovie.title} 
                               className="w-10 h-14 object-cover rounded shadow border border-slate-700 shrink-0" 
                             />
@@ -1607,7 +1608,7 @@ export default function AdminPanel() {
                                       }`}
                                     >
                                       <img 
-                                        src={`http://localhost:3000${movie.posterUrl}`} 
+                                        src={getImageUrl(movie.posterUrl)} 
                                         alt={movie.title} 
                                         className="w-10 h-14 object-cover rounded shadow border border-slate-700 shrink-0" 
                                       />
@@ -1634,7 +1635,7 @@ export default function AdminPanel() {
                                         className="w-full flex items-center gap-3 p-2.5 opacity-40 cursor-not-allowed select-none text-left"
                                       >
                                         <img 
-                                          src={`http://localhost:3000${movie.posterUrl}`} 
+                                          src={getImageUrl(movie.posterUrl)} 
                                           alt={movie.title} 
                                           className="w-10 h-14 object-cover rounded shadow border border-slate-700 shrink-0" 
                                         />
@@ -1841,7 +1842,7 @@ export default function AdminPanel() {
             <div className="bg-slate-800/50 rounded-xl p-4 mb-6 border border-slate-700/50">
               <div className="flex items-center gap-3">
                 {functionToDelete.Movie?.posterUrl ? (
-                  <img src={`http://localhost:3000${functionToDelete.Movie.posterUrl}`} alt="poster" className="w-10 h-14 object-cover rounded shadow-sm" />
+                  <img src={getImageUrl(functionToDelete.Movie.posterUrl)} alt="poster" className="w-10 h-14 object-cover rounded shadow-sm" />
                 ) : (
                   <div className="w-10 h-14 bg-slate-800 rounded flex items-center justify-center"><span className="text-xs">🎬</span></div>
                 )}

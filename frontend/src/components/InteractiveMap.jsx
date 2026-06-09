@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { io } from 'socket.io-client';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { toastSeatOccupied } from '../utils/toastHelper';
 import { useTicket } from '../context/TicketContext';
 import { Lock } from 'lucide-react';
@@ -144,7 +145,7 @@ export default function InteractiveMap({ functionId, capacity, soldSeats = [] })
 
   useEffect(() => {
     setCurrentFunctionId(functionId);
-    const newSocket = io('http://localhost:3000/seats');
+    const newSocket = io(`${SOCKET_URL}/seats`);
     setSocket(newSocket);
 
     newSocket.on('connect', () => {

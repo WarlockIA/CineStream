@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { Html5Qrcode } from 'html5-qrcode';
 
 import jsQR from 'jsqr';
@@ -167,7 +168,7 @@ export default function PorteroPanel() {
   const fetchTodayFunctions = async () => {
     try {
       const todayStr = toBoliviaInputString(new Date()).split('T')[0];
-      const res = await axios.get(`http://localhost:3000/api/functions?date=${todayStr}&includeInactive=true`, {
+      const res = await axios.get(getAPIUrl(`/api/functions?date=${todayStr}&includeInactive=true`), {
         headers: { Authorization: `Bearer ${token}` }
       });
       const list = res.data.data || [];
@@ -183,7 +184,7 @@ export default function PorteroPanel() {
   const fetchValidations = useCallback(async (funcId) => {
     if (!funcId) return;
     try {
-      const res = await axios.get(`http://localhost:3000/api/functions/${funcId}/validations`, {
+      const res = await axios.get(getAPIUrl(`/api/functions/${funcId}/validations`), {
         headers: { Authorization: `Bearer ${token}` }
       });
       setValidations(res.data.data);
@@ -226,7 +227,7 @@ export default function PorteroPanel() {
     try {
       const endpoint = currentMode === 'snacks' ? 'scan-snacks-qr' : 'scan-qr';
       const res = await axios.post(
-        `http://localhost:3000/api/bookings/${endpoint}`,
+        getAPIUrl(`/api/bookings/${endpoint}`),
         { token: decodedText },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -621,7 +622,7 @@ export default function PorteroPanel() {
                       return (
                         <div className="flex items-center gap-3">
                           {selFunc.Movie?.posterUrl ? (
-                            <img src={`http://localhost:3000${selFunc.Movie.posterUrl}`} alt="poster" className="w-8 h-10 object-cover rounded shadow-sm border border-slate-700/50" />
+                            <img src={getImageUrl(selFunc.Movie.posterUrl)} alt="poster" className="w-8 h-10 object-cover rounded shadow-sm border border-slate-700/50" />
                           ) : (
                             <div className="w-8 h-10 bg-slate-800 rounded flex items-center justify-center border border-slate-700/50"><Film className="w-4 h-4 text-slate-500" /></div>
                           )}
@@ -657,7 +658,7 @@ export default function PorteroPanel() {
                         }}
                       >
                         {f.Movie?.posterUrl ? (
-                          <img src={`http://localhost:3000${f.Movie.posterUrl}`} alt="poster" className="w-8 h-10 object-cover rounded shadow-sm border border-slate-700/50" />
+                          <img src={getImageUrl(f.Movie.posterUrl)} alt="poster" className="w-8 h-10 object-cover rounded shadow-sm border border-slate-700/50" />
                         ) : (
                           <div className="w-8 h-10 bg-slate-800 rounded flex items-center justify-center border border-slate-700/50"><Film className="w-4 h-4 text-slate-500" /></div>
                         )}

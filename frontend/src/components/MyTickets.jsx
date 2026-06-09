@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useTicket } from '../context/TicketContext';
 import { useNavigate } from 'react-router-dom';
@@ -348,7 +349,7 @@ const TicketCard = ({ ticket, onCancelTicket }) => {
         <div className="flex gap-4 p-5 border-b border-slate-800/80">
           {hasSeats && movie?.posterUrl ? (
             <img
-              src={`http://localhost:3000${movie.posterUrl}`}
+              src={getImageUrl(movie.posterUrl)}
               alt="Poster"
               loading="lazy"
               className="w-16 h-24 object-cover rounded-xl shrink-0"
@@ -587,7 +588,7 @@ export default function MyTickets() {
     if (!cancellingTicket) return;
     setIsSubmittingCancel(true);
     try {
-      const res = await axios.post(`http://localhost:3000/api/bookings/${cancellingTicket.id}/cancel`, {}, {
+      const res = await axios.post(getAPIUrl(`/api/bookings/${cancellingTicket.id}/cancel`), {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toastSuccess('¡Ticket cancelado con éxito!');
@@ -604,7 +605,7 @@ export default function MyTickets() {
   useEffect(() => {
     const fetchTickets = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/bookings/my-tickets', {
+        const res = await axios.get(getAPIUrl('/api/bookings/my-tickets'), {
           headers: { Authorization: `Bearer ${token}` },
         });
         setTickets(res.data.data);
@@ -618,7 +619,7 @@ export default function MyTickets() {
   }, [token]);
 
   useEffect(() => {
-    const socket = io('http://localhost:3000');
+    const socket = io(SOCKET_URL);
     socket.on('connect', () => {
       console.log('🔌 Connected to WebSockets in MyTickets');
     });

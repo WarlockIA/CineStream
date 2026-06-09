@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toastSuccess, toastError } from '../utils/toastHelper';
 import { Ticket, Search, XCircle, ShieldAlert, Award, Calendar } from 'lucide-react';
+import { getAPIUrl } from '../config/api';
 
 export default function AdminCoupons() {
   const { token } = useAuth();
@@ -14,7 +15,7 @@ export default function AdminCoupons() {
   const fetchCoupons = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('http://localhost:3000/api/bookings/admin/coupons', {
+      const res = await axios.get(getAPIUrl('/api/bookings/admin/coupons'), {
         headers: { Authorization: `Bearer ${token}` }
       });
       setCoupons(res.data.data || []);
@@ -37,7 +38,7 @@ export default function AdminCoupons() {
     const { id, code } = revokePrompt;
     setRevokePrompt(null);
     try {
-      await axios.post(`http://localhost:3000/api/bookings/admin/coupons/${id}/revoke`, {}, {
+      await axios.post(getAPIUrl(`/api/bookings/admin/coupons/${id}/revoke`), {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toastSuccess(`¡Cupón ${code} anulado con éxito!`);

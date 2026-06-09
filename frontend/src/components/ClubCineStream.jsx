@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { toastSuccess, toastError } from '../utils/toastHelper';
 import { Award, CreditCard, Gift, ShieldAlert, Sparkles, Zap, Trash2, Calendar, Clock } from 'lucide-react';
@@ -21,10 +22,10 @@ export default function ClubCineStream() {
     setLoading(true);
     try {
       const [profileRes, historyRes] = await Promise.all([
-        axios.get('http://localhost:3000/api/users/profile', {
+        axios.get(getAPIUrl('/api/users/profile'), {
           headers: { Authorization: `Bearer ${token}` }
         }),
-        axios.get('http://localhost:3000/api/users/points-history', {
+        axios.get(getAPIUrl('/api/users/points-history'), {
           headers: { Authorization: `Bearer ${token}` }
         })
       ]);
@@ -51,7 +52,7 @@ export default function ClubCineStream() {
     setSubmitting(true);
     try {
       const res = await axios.post(
-        'http://localhost:3000/api/users/subscribe-premium',
+        getAPIUrl('/api/users/subscribe-premium'),
         { tier: showPayModal },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useTicket } from '../context/TicketContext';
 import { useNavigate } from 'react-router-dom';
@@ -101,7 +102,7 @@ const PosSidebar = ({ func, seats, snacks, ticketPrice, snackTotal, total, isSna
               <div className="flex items-center gap-3">
                 {func.Movie?.posterUrl ? (
                   <img 
-                    src={`http://localhost:3000${func.Movie.posterUrl}`} 
+                    src={getImageUrl(func.Movie.posterUrl)} 
                     alt={func.Movie?.title} 
                     className="w-10 h-10 rounded-xl object-cover shrink-0 border border-slate-700/50 shadow-sm"
                   />
@@ -217,7 +218,7 @@ const StepFunction = ({ onSelect, onSoloSnacks }) => {
   const [search,    setSearch]    = useState('');
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/functions')
+    axios.get(getAPIUrl('/api/functions'))
       .then(r => setFunctions(r.data.data || []))
       .catch(() => toastError('Error al cargar funciones del día.'))
       .finally(() => setLoading(false));
@@ -298,7 +299,7 @@ const StepFunction = ({ onSelect, onSoloSnacks }) => {
                 <div className="w-20 h-28 shrink-0 rounded-xl overflow-hidden bg-slate-800 flex items-center justify-center shadow-inner relative z-10">
                   {poster ? (
                     <img 
-                      src={poster.startsWith('http') ? poster : `http://localhost:3000${poster}`} 
+                      src={poster.startsWith('http') ? poster : getImageUrl(poster)} 
                       alt={f.Movie?.title} 
                       className="w-full h-full block object-cover transition-transform duration-700 group-hover:scale-110" 
                     />
@@ -347,7 +348,7 @@ const StepSeats = ({ func }) => {
   const [soldSeats, setSoldSeats] = useState([]);
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/api/functions/${func.id}`)
+    axios.get(getAPIUrl(`/api/functions/${func.id}`))
       .then(r => {
         const sold = r.data.data?.soldSeats || [];
         setSoldSeats(sold);
@@ -413,7 +414,7 @@ const StepSnacks = ({ cart, onAdd, onRemove, onProductsLoaded }) => {
   const [loading,  setLoading]  = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:3000/api/products')
+    axios.get(getAPIUrl('/api/products'))
       .then(r => {
         const prodList = r.data.data || [];
         setProducts(prodList);
@@ -590,7 +591,7 @@ const StepConfirm = ({ func, seats, snackCart, ticketPrice, snackTotal, total, i
           <div className="flex items-start gap-4">
             {func.Movie?.posterUrl ? (
               <img
-                src={`http://localhost:3000${func.Movie.posterUrl}`}
+                src={getImageUrl(func.Movie.posterUrl)}
                 alt={func.Movie?.title}
                 className="w-16 h-24 block object-cover rounded-xl shrink-0 shadow-lg border border-white/10"
               />
@@ -926,7 +927,7 @@ export default function PosPanel() {
     for (let i = 0; i < queue.length; i++) {
       const { payload } = queue[i];
       try {
-        await axios.post('http://localhost:3000/api/bookings/pos-checkout', payload, {
+        await axios.post(getAPIUrl('/api/bookings/pos-checkout'), payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         queue.splice(i, 1);
@@ -1001,7 +1002,7 @@ export default function PosPanel() {
     try {
       console.log('--- CineStream POS Payload ---', payload);
 
-      const res = await axios.post('http://localhost:3000/api/bookings/pos-checkout', payload, {
+      const res = await axios.post(getAPIUrl('/api/bookings/pos-checkout'), payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -1031,7 +1032,7 @@ export default function PosPanel() {
   const fetchCurrentShift = useCallback(async () => {
     if (!token) return;
     try {
-      const res = await axios.get('http://localhost:3000/api/shifts/current', {
+      const res = await axios.get(getAPIUrl('/api/shifts/current'), {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShift(res.data.data);
@@ -1058,7 +1059,7 @@ export default function PosPanel() {
   // Cargar resumen de arqueo desglosado
   useEffect(() => {
     if (showCloseModal && token) {
-      axios.get('http://localhost:3000/api/shifts/summary', {
+      axios.get(getAPIUrl('/api/shifts/summary'), {
         headers: { Authorization: `Bearer ${token}` }
       }).then(r => setShiftSummary(r.data.data))
         .catch(() => toastError('Error al cargar resumen de ventas.'));
@@ -1070,7 +1071,7 @@ export default function PosPanel() {
 
   const handleOpenShift = async () => {
     try {
-      const res = await axios.post('http://localhost:3000/api/shifts/open', {}, {
+      const res = await axios.post(getAPIUrl('/api/shifts/open'), {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setShift(res.data.data);
@@ -1091,7 +1092,7 @@ export default function PosPanel() {
     }
     setClosing(true);
     try {
-      const res = await axios.post('http://localhost:3000/api/shifts/close', { actualCash }, {
+      const res = await axios.post(getAPIUrl('/api/shifts/close'), { actualCash }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       toastSuccess('Arqueo completado y caja cerrada.');

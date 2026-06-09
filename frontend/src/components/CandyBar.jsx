@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useTicket } from '../context/TicketContext';
 import { useAuth } from '../context/AuthContext';
 import { ShoppingCart, Plus, Minus, Popcorn, CupSoda, Cookie, Sparkles, Home, Ticket, Film } from 'lucide-react';
@@ -53,7 +54,7 @@ export default function CandyBar() {
   React.useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/products');
+        const res = await axios.get(getAPIUrl('/api/products'));
         const sortedProducts = res.data.data.sort((a, b) => {
           const posA = PRODUCT_ORDER.indexOf(a.id);
           const posB = PRODUCT_ORDER.indexOf(b.id);
@@ -71,7 +72,7 @@ export default function CandyBar() {
     if (currentFunctionId) {
       const fetchFunctionDetails = async () => {
         try {
-          const res = await axios.get(`http://localhost:3000/api/functions/${currentFunctionId}`);
+          const res = await axios.get(getAPIUrl(`/api/functions/${currentFunctionId}`));
           if (res.data.success) {
             setMovie(res.data.data.Movie);
           }

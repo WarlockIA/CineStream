@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toastSuccess, toastError } from '../utils/toastHelper';
 import { useAuth } from '../context/AuthContext';
 import { AlertTriangle, Plus } from 'lucide-react';
+import { getAPIUrl } from '../config/api';
 
 const localDataMap = {
   's1': { image: '/cinema_combo_premium.png' },
@@ -25,7 +26,7 @@ export default function AdminInventory() {
 
   const fetchProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/api/products');
+      const res = await axios.get(getAPIUrl('/api/products'));
       const sortedProducts = res.data.data.sort((a, b) => {
         const posA = PRODUCT_ORDER.indexOf(a.id);
         const posB = PRODUCT_ORDER.indexOf(b.id);
@@ -47,7 +48,7 @@ export default function AdminInventory() {
   const syncWithServer = async (id, field, value) => {
     try {
       await axios.put(
-        `http://localhost:3000/api/products/${id}`,
+        getAPIUrl(`/api/products/${id}`),
         { [field]: value },
         { headers: { Authorization: `Bearer ${token}` } }
       );

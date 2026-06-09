@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { toastError, toastSuccess } from '../utils/toastHelper';
 import { Mail, Lock, Eye, EyeOff, Film, ArrowRight } from 'lucide-react';
+import { getAPIUrl } from '../config/api';
 
 export default function LoginForm() {
   const [email, setEmail] = useState(() => {
@@ -161,7 +162,7 @@ export default function LoginForm() {
     if (!validate()) return;
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/login', { email, password });
+      const response = await axios.post(getAPIUrl('/api/auth/login'), { email, password });
       const { token, user } = response.data.data;
       
       if (rememberMe) {

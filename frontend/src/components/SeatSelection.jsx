@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useTicket } from '../context/TicketContext';
 import { useAuth } from '../context/AuthContext';
 import { toastError } from '../utils/toastHelper';
@@ -21,7 +22,7 @@ export default function SeatSelection() {
   useEffect(() => {
     const fetchFunctionDetails = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/functions/${functionId}`);
+        const res = await axios.get(getAPIUrl(`/api/functions/${functionId}`));
         setFuncDetails(res.data.data);
       } catch (error) {
         toastError('Error al cargar los detalles de la función.');
@@ -150,7 +151,7 @@ export default function SeatSelection() {
           {funcDetails.Movie?.posterUrl ? (
             <div className="w-24 h-36 shrink-0 poster-shine-wrapper shadow-[0_15px_30px_rgba(0,0,0,0.6)] border border-slate-600/50 rounded-xl overflow-hidden relative z-10 group-hover:scale-105 transition-transform duration-500">
               <img 
-                src={`http://localhost:3000${funcDetails.Movie.posterUrl}`} 
+                src={getImageUrl(funcDetails.Movie.posterUrl)} 
                 alt={funcDetails.Movie.title} 
                 className="w-full h-full object-cover"
               />

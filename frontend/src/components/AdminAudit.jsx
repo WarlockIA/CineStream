@@ -6,6 +6,7 @@ import {
   User, Activity, ChevronLeft, ChevronRight,
   Info, AlertTriangle, CheckCircle2, DollarSign, Package
 } from 'lucide-react';
+import { getAPIUrl } from '../config/api';
 
 const ACTION_CONFIG = {
   CINEMA_SALE_COMPLETED: { color: 'text-emerald-400', bg: 'bg-emerald-500/10', icon: DollarSign, label: 'Venta Cine' },
@@ -46,7 +47,7 @@ export default function AdminAudit() {
     setLoading(true);
     try {
       const { action, startDate, endDate, username } = appliedFilters;
-      let url = `http://localhost:3000/api/audit?limit=${limit}&offset=${page * limit}`;
+      let url = getAPIUrl(`/api/audit?limit=${limit}&offset=${page * limit}`);
       if (action) url += `&action=${encodeURIComponent(action)}`;
       if (startDate) url += `&startDate=${encodeURIComponent(startDate)}`;
       if (endDate) url += `&endDate=${encodeURIComponent(endDate)}`;

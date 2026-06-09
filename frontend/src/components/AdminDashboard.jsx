@@ -7,6 +7,7 @@ import {
 } from 'recharts';
 import { TrendingUp, Ticket, Users, AlertCircle, Calendar, Zap, Package, DollarSign, CheckCircle2 } from 'lucide-react';
 import { io } from 'socket.io-client';
+import { getAPIUrl, SOCKET_URL } from '../config/api';
 
 const COLORS = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#ef4444'];
 const PIE_COLORS = ['#3b82f6', '#8b5cf6'];
@@ -20,7 +21,7 @@ function useDashboardData(token, startDate, endDate) {
     const fetchDashboard = async () => {
       setLoading(true);
       try {
-        let url = 'http://localhost:3000/api/reports/dashboard';
+        let url = getAPIUrl('/api/reports/dashboard');
         if (startDate && endDate) {
           url += `?startDate=${startDate}&endDate=${endDate}`;
         }
@@ -67,7 +68,7 @@ export default function AdminDashboard() {
 
   // Conexión Socket para Live Monitoring
   useEffect(() => {
-    const newSocket = io('http://localhost:3000');
+    const newSocket = io(SOCKET_URL);
     setSocket(newSocket);
     newSocket.on('sale:new', (sale) => {
       setLiveSales(prev => [sale, ...prev].slice(0, 5)); // Últimas 5 ventas

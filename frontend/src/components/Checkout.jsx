@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTicket } from '../context/TicketContext';
@@ -47,7 +48,7 @@ export default function Checkout() {
   useEffect(() => {
     const fetchCoupons = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/users/coupons', {
+        const res = await axios.get(getAPIUrl('/api/users/coupons'), {
           headers: { Authorization: `Bearer ${token}` }
         });
         setCoupons(res.data.data || []);
@@ -61,7 +62,7 @@ export default function Checkout() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/users/profile', {
+        const res = await axios.get(getAPIUrl('/api/users/profile'), {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUserProfile(res.data.data.profile);
@@ -76,7 +77,7 @@ export default function Checkout() {
     if (!codeToApply) return;
     setCouponLoading(true);
     try {
-      const res = await axios.post('http://localhost:3000/api/bookings/apply-coupon', 
+      const res = await axios.post(getAPIUrl('/api/bookings/apply-coupon'), 
         { code: codeToApply },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -109,7 +110,7 @@ export default function Checkout() {
     }
     const fetchFunctionDetails = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/functions/${currentFunctionId}`);
+        const res = await axios.get(getAPIUrl(`/api/functions/${currentFunctionId}`));
         setFuncDetails(res.data.data);
         hasValidated.current = true;
       } catch (error) {
@@ -210,7 +211,7 @@ export default function Checkout() {
       ...(paymentMethod === 'card' && netTotalPrice > 0 && { paymentToken: 'tok_visa_simulated', cardNumber }),
     };
 
-    const checkoutPromise = axios.post('http://localhost:3000/api/bookings/checkout', payload, {
+    const checkoutPromise = axios.post(getAPIUrl('/api/bookings/checkout'), payload, {
       headers: { Authorization: `Bearer ${token}` },
     });
 
@@ -240,7 +241,7 @@ export default function Checkout() {
     setIsConfirming(true);
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/bookings/confirm-qr-payment',
+        getAPIUrl('/api/bookings/confirm-qr-payment'),
         { transactionId: qrPaymentData.transactionId },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -372,7 +373,7 @@ export default function Checkout() {
                   <div className="flex gap-4 mb-6">
                     {funcDetails.Movie?.posterUrl ? (
                       <img
-                        src={`http://localhost:3000${funcDetails.Movie.posterUrl}`}
+                        src={getImageUrl(funcDetails.Movie.posterUrl)}
                         alt={funcDetails.Movie.title}
                         className="w-24 h-36 object-cover rounded-lg shadow-md"
                       />

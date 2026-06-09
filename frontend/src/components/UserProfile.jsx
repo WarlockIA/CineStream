@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import {
   User, Award, Star, History, Ticket,
@@ -54,7 +55,7 @@ export default function UserProfile() {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/users/profile', {
+        const res = await axios.get(getAPIUrl('/api/users/profile'), {
           headers: { Authorization: `Bearer ${token}` }
         });
         setData(res.data.data);
@@ -430,7 +431,7 @@ export default function UserProfile() {
                       <div className="w-16 h-20 rounded-xl bg-slate-800 overflow-hidden shrink-0">
                         <img
                           src={ticket.Function?.Movie?.posterUrl
-                            ? `http://localhost:3000${ticket.Function.Movie.posterUrl}`
+                            ? getImageUrl(ticket.Function.Movie.posterUrl)
                             : '/cinema_combo_premium.png'}
                           className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
                           alt={ticket.Function?.Movie?.title || 'Solo Dulcería'}

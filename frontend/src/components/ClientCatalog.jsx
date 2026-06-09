@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { getAPIUrl, getImageUrl, SOCKET_URL } from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Star, Ticket, Clock, Play, Crown, ChevronLeft, ChevronRight, Film } from 'lucide-react';
@@ -99,7 +100,7 @@ export default function ClientCatalog() {
     const fetchFunctions = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`http://localhost:3000/api/functions?date=${selectedDate}`);
+        const response = await axios.get(getAPIUrl(`/api/functions?date=${selectedDate}`));
         const data = response.data.data;
         const groupedMap = data.reduce((acc, func) => {
           const movieId = func.movieId;
@@ -228,7 +229,7 @@ export default function ClientCatalog() {
                 const isCurrent = idx === activeHeroIndex;
                 const movie = item.movieInfo;
                 const backdropUrl = movie?.posterUrl
-                  ? `http://localhost:3000${movie.posterUrl}`
+                  ? getImageUrl(movie.posterUrl)
                   : 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=1200&auto=format&fit=crop';
                 return (
                   <div 
@@ -441,7 +442,7 @@ export default function ClientCatalog() {
                 {/* Póster */}
                 <div className="card-poster-area-premium">
                   <img
-                    src={`http://localhost:3000${item.movieInfo.posterUrl}`}
+                    src={getImageUrl(item.movieInfo.posterUrl)}
                     alt={`Póster de ${item.movieInfo.title}`}
                     loading="lazy"
                     decoding="async"
